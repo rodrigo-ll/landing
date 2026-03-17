@@ -147,12 +147,13 @@ body::before{
   text-transform:uppercase;color:var(--text3);margin-bottom:20px;
 }
 .org-logos{
-  display:flex;align-items:center;flex-wrap:wrap;
+  display:flex;align-items:center;flex-wrap:nowrap;
 }
 .org-logo{
-  padding:10px 24px;
+  padding:10px 22px;
   border-right:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
 }
 .org-logo:first-child{padding-left:0}
 .org-logo:last-child{border-right:none}
@@ -193,8 +194,8 @@ body::before{
 .demo-tab:hover{color:var(--text2)}
 .demo-tab.active{color:var(--text);border-bottom-color:var(--text2)}
 .demo-body{
-  padding:24px;min-height:340px;display:flex;flex-direction:column;
-  gap:12px;overflow-y:auto;max-height:420px;
+  padding:24px;height:420px;display:flex;flex-direction:column;
+  gap:12px;overflow-y:auto;
 }
 .demo-body::-webkit-scrollbar{width:3px}
 .demo-body::-webkit-scrollbar-thumb{background:var(--border2)}
@@ -343,7 +344,7 @@ section{padding:110px 0;position:relative;z-index:1}
 
 /* ── CTA ───────────────────────────────────────────────────────── */
 #contact{
-  padding:150px 48px;text-align:center;position:relative;overflow:hidden;
+  padding:90px 48px 100px;text-align:center;position:relative;overflow:hidden;
   background:var(--bg);
 }
 #contact::before{
@@ -388,21 +389,41 @@ footer{
   .container{padding:0 24px}
   .nav{padding:0 24px}
   .nav-center,.nav-right .btn-ghost{display:none}
-  .hero{padding:100px 24px 80px}
+  .hero{padding:100px 24px 72px}
   section{padding:80px 0}
-  #contact{padding:90px 24px}
+  #contact{padding:70px 24px 80px}
   .problem-grid{grid-template-columns:1fr}
   .how-grid{grid-template-columns:1fr}
   .solution-features{grid-template-columns:1fr}
   .demo-panel{position:static}
   .team-grid{grid-template-columns:1fr}
-  .org-logos{flex-wrap:wrap}
-  .org-logo{padding:8px 16px}
+  .hero-creds{margin-top:40px}
   footer{padding:20px 24px;flex-direction:column;gap:6px;text-align:center}
 }
-@media(max-width:540px){
-  .org-logo{padding:6px 12px}
-  .org-logo svg{height:24px;max-width:80px}
+
+/* Mobile logo grid — 3 columns × 2 rows */
+@media(max-width:680px){
+  .org-logos{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    flex-wrap:unset;
+    gap:0;
+    border:1px solid var(--border);
+  }
+  .org-logo{
+    flex-shrink:unset;
+    border-right:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    padding:14px 8px;
+    background:transparent;
+  }
+  /* Remove right border on every 3rd logo */
+  .org-logo:nth-child(3n){border-right:none}
+  /* Remove bottom border on last row (logos 4-6) */
+  .org-logo:nth-child(n+4){border-bottom:none}
+  /* Reset desktop first-child left padding override */
+  .org-logo:first-child{padding-left:8px}
+  .org-logo svg{height:26px;max-width:90px}
 }
 </style>
 </head>
