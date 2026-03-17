@@ -782,7 +782,7 @@ footer{
 <!-- ── Footer ── -->
 <footer>
   <span>&copy; 2026 LeanLog, Inc.</span>
-  <span>AI-native back office for warehouses</span>
+  <span>AI Agents for 3PLs and Distributors</span>
 </footer>
 
 <script>
@@ -957,7 +957,18 @@ function showSfPanel(idx) {
   sfTimer = setTimeout(() => showSfPanel((idx + 1) % sfItems.length), 5000);
 }
 sfItems.forEach((s, i) => s.addEventListener('click', () => showSfPanel(i)));
-showSfPanel(0);
+
+let sfStarted = false;
+const sfTrigger = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !sfStarted) {
+      sfStarted = true;
+      showSfPanel(0);
+      sfTrigger.disconnect();
+    }
+  });
+}, { threshold: 0.3 });
+sfTrigger.observe(document.querySelector('.sf-block'));
 
 /* ── Hero headline cycling ─────────────────────────────────────── */
 const cycleTexts = ['Run More Clients', 'Manage More Suppliers', 'Handle More Carriers'];
