@@ -128,6 +128,11 @@ body::before{
   margin-bottom:44px;font-weight:300;
   opacity:0;animation:fadeUp .8s .38s forwards;
 }
+.hero-cycle{display:inline-block;min-width:13ch}
+.hero-cycle.cycle-exit{animation:cycleOut .28s ease forwards}
+.hero-cycle.cycle-enter{animation:cycleEnter .32s ease forwards}
+@keyframes cycleOut{to{opacity:0;transform:translateY(-10px)}}
+@keyframes cycleEnter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .hero-actions{
   display:flex;align-items:center;gap:14px;flex-wrap:wrap;
   opacity:0;animation:fadeUp .8s .52s forwards;
@@ -306,7 +311,7 @@ section{padding:50px 0;position:relative;z-index:1}
 .sf-block{display:grid;grid-template-columns:1fr 1.5fr;column-gap:48px;background:transparent;margin-top:40px;padding-top:40px;border-top:1px solid var(--border)}
 .sf-list{display:flex;flex-direction:column;gap:1px;background:var(--border)}
 .sf{
-  background:var(--bg);padding:48px 36px;
+  background:var(--bg);padding:38px 36px;
   display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;
   transition:background .3s;cursor:pointer;
 }
@@ -456,11 +461,11 @@ footer{
   <div class="hero-glow"></div>
   <div class="hero-inner">
     <div class="hero-eyebrow">
-      <div class="eyebrow-badge">AI Agents for Warehouses</div>
+      <div class="eyebrow-badge">AI Agents for 3PLs &amp; Wholesale Distributors</div>
       <div class="eyebrow-line"></div>
     </div>
-    <h1>Your Warehouse Deserves Greater Margins. Not Another System to <em>Manage.</em></h1>
-    <p class="hero-sub">LeanLog automates supplier communications, procurement, invoicing, and scheduling. No software to learn. No screens to check. Your team just talks.</p>
+    <h1><span class="hero-cycle" id="heroCycle">Run More Clients</span>.<br>Without Hiring More People.</h1>
+    <p class="hero-sub">LeanLog handles carrier scheduling, vendor POs, invoice disputes, and reorder alerts — automatically. Your team gives instructions in plain language. The agent executes.</p>
     <div class="hero-actions">
       <a class="btn-primary" href="mailto:rodrigo@leanlog.ai">Talk with a Founder</a>
       <button class="btn-outline" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">See the Demo</button>
@@ -556,7 +561,7 @@ footer{
   <div class="container">
     <div class="section-header">
       <div class="tag reveal">02 — The problem</div>
-      <h2 class="section-title reveal reveal-d1">Warehouses are the backbone of commerce. They're also being <em>crushed.</em></h2>
+      <h2 class="section-title reveal reveal-d1">3PLs and Distributors Are Squeezed From <em>Every Direction.</em></h2>
       <p class="section-desc reveal reveal-d2">Rising salaries, greater rent, and intense competition have squeezed margins to near zero. The software that's supposed to help costs more to implement than years of licensing.</p>
     </div>
     <div class="problem-grid reveal reveal-d3">
@@ -566,7 +571,7 @@ footer{
           <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
         </div>
         <h3>Margins under siege</h3>
-        <p>Warehouses operate on thin margins and face pressure from rising labor costs, SKU complexity, and rent inflation. Every $ counts.</p>
+        <p>You compete on price and service. But every carrier dispute, short-pay, and manual PO erodes the margin you fought to win. There's no room for back-office inefficiency.</p>
       </div>
       <div class="problem-card">
         <span class="pc-index">02 / 03</span>
@@ -574,15 +579,15 @@ footer{
           <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
         <h3>Labor is your biggest cost</h3>
-        <p>Back-office work accounts for up to 30% of all labor — supplier calls, invoicing, scheduling, procurement. All done manually, every day.</p>
+        <p>For every shipment, there are 5–10 back-office touches — scheduling calls, supplier follow-ups, invoice reconciliation. That's a full-time employee's work, repeated daily across every client or vendor.</p>
       </div>
       <div class="problem-card">
         <span class="pc-index">03 / 03</span>
         <div class="pc-icon">
           <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         </div>
-        <h3>Software doesn't help</h3>
-        <p>Legacy WMS costs $200–500K and takes months to set up. Teams still end up running operations on spreadsheets and phone calls.</p>
+        <h3>Your WMS doesn't cover the half of it</h3>
+        <p>A WMS tracks inventory. It doesn't call the carrier when a delivery is late, dispute the invoice, or follow up with a vendor on a short shipment. That still falls on your team.</p>
       </div>
     </div>
   </div>
@@ -593,8 +598,8 @@ footer{
   <div class="container">
     <div class="section-header">
       <div class="tag reveal">03 — The solution</div>
-      <h2 class="section-title reveal reveal-d1">The agent works the way you <em>already</em> work.</h2>
-      <p class="section-desc reveal reveal-d2">No training. No dashboards. LeanLog connects to your existing operation from day one — through voice and text.</p>
+      <h2 class="section-title reveal reveal-d1">Runs your back office the way a great ops hire <em>would.</em></h2>
+      <p class="section-desc reveal reveal-d2">No new software to learn. No process changes. LeanLog slots into how your team already operates — through voice and text — from day one.</p>
     </div>
 
     <div class="sf-block reveal reveal-d3">
@@ -605,21 +610,21 @@ footer{
           <div class="sf-dot"></div>
           <div>
             <h4>Works by talking</h4>
-            <p>No software to learn, no screens to check, no data to enter. Your team just talks or texts — the agent handles everything from there.</p>
+            <p>Your dispatcher, ops manager, or buyer just sends a message — "schedule Dock 3 for Tuesday," "dispute the Acme invoice," "reorder SKU 4821." The agent handles the rest: calls, emails, records, follow-ups.</p>
           </div>
         </div>
         <div class="sf" data-visual="1">
           <div class="sf-dot"></div>
           <div>
             <h4>Full visibility</h4>
-            <p>The agent manages all records internally — every call, invoice, PO, and schedule change is logged and accessible to you at any time.</p>
+            <p>Every carrier call, vendor negotiation, PO, and invoice is logged automatically. Your team and your clients always know where things stand — no chasing updates.</p>
           </div>
         </div>
         <div class="sf" data-visual="2">
           <div class="sf-dot"></div>
           <div>
             <h4>You stay in control</h4>
-            <p>You decide which workflows require your approval. Some tasks execute automatically; others check in with you first — your call.</p>
+            <p>You set the rules. High-value POs require approval; routine reorders execute automatically. Works for 3PLs managing client SLAs and distributors managing vendor terms alike.</p>
           </div>
         </div>
       </div>
@@ -779,6 +784,7 @@ footer{
 </footer>
 
 <script>
+if (history.scrollRestoration) history.scrollRestoration = 'manual';
 /* ── Scroll reveal ─────────────────────────────────────────────── */
 const ro = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); ro.unobserve(e.target); } });
@@ -950,6 +956,21 @@ function showSfPanel(idx) {
 }
 sfItems.forEach((s, i) => s.addEventListener('click', () => showSfPanel(i)));
 showSfPanel(0);
+
+/* ── Hero headline cycling ─────────────────────────────────────── */
+const cycleTexts = ['Run More Clients', 'Manage More Suppliers', 'Handle More Carriers'];
+let cycleIdx = 0;
+const cycleEl = document.getElementById('heroCycle');
+setInterval(() => {
+  cycleEl.classList.remove('cycle-enter');
+  cycleEl.classList.add('cycle-exit');
+  setTimeout(() => {
+    cycleIdx = (cycleIdx + 1) % cycleTexts.length;
+    cycleEl.textContent = cycleTexts[cycleIdx];
+    cycleEl.classList.remove('cycle-exit');
+    cycleEl.classList.add('cycle-enter');
+  }, 280);
+}, 3000);
 </script>
 </body>
 </html>
