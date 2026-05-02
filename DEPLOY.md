@@ -8,6 +8,17 @@ There is a closely related — but separate — doc at [../demos/naked-wines/DEP
 
 ---
 
+## Current state (as of refresh push)
+
+- **Phase 1 is done.** The Pages project `leanlog-landing` exists in Oscar's Cloudflare account.
+- **Production branch is `main`** (not `refresh` — see the trade-off note in Phase 1 below). `leanlog-landing.pages.dev` therefore mirrors what's on GitHub Pages today.
+- **`refresh` is iterated as a preview** at `https://refresh.leanlog-landing.pages.dev`. Cloudflare auto-rebuilds on every push to `refresh`.
+- **No custom domain** is attached to the Pages project yet. `leanlog.ai` still resolves to GitHub Pages.
+
+Skip to Phase 2 if you're doing the cutover.
+
+---
+
 ## Phase 1 — Stand up the Cloudflare Pages project (preview only)
 
 Goal: have a working `<project>.pages.dev` URL serving the new homepage and `/about` from the `refresh` branch. The apex `leanlog.ai` is **not** touched in this phase — it keeps serving the old GitHub Pages site.
@@ -36,7 +47,7 @@ git push -u origin refresh
 | Field | Value |
 |---|---|
 | Project name | `leanlog-landing` (this becomes `leanlog-landing.pages.dev`) |
-| Production branch | **`refresh`** *(not `main` — `main` keeps serving the current GH Pages site)* |
+| Production branch | **`main`** *(see trade-off below)* |
 | Framework preset | **None** |
 | Build command | *(leave empty)* |
 | Build output directory | `/` *(repo root — the HTML files are at the top level)* |
@@ -49,20 +60,22 @@ git push -u origin refresh
 
 Click **Save and Deploy**.
 
+> **Trade-off on production branch.** With production=`main`, the Pages project mirrors what's on GitHub Pages today and we iterate `refresh` at `refresh.leanlog-landing.pages.dev`. With production=`refresh`, the bare `.pages.dev` URL would serve the new content. We picked `main` because (a) the eventual cutover is just a `refresh` → `main` merge, no Cloudflare branch switch needed, and (b) preview deployments get `x-robots-tag: noindex` by default — handy while the WIP isn't ready for crawlers.
+
 ### 4. Wait for the first build (~30 seconds)
 
 Cloudflare clones the repo, copies static files, and serves them. There's no `npm run build` step — it's pure static HTML.
 
-When it finishes, you'll see a URL like `https://leanlog-landing.pages.dev`. Open it.
+When it finishes, you'll see a URL like `https://leanlog-landing.pages.dev` (production = `main`) and `https://refresh.leanlog-landing.pages.dev` (preview = `refresh`). Open the one matching the branch you want to verify.
 
 ### 5. Smoke test
 
 In a fresh incognito window:
 
-- Homepage at `/` — verify hero, demo cycles, problem section, vision rows, four-pillar CTA, footer.
+- Homepage at `/` — verify hero cycles (Run/Manage/Handle More Clients/Suppliers/Carriers), demo tabs auto-cycle, problem section, vision rows (talk/log/control), closing CTA "Try LeanLog **now.**", footer.
 - About at `/about.html` (or `/about` — Pages handles both) — verify hero copy, credentials strip, closing CTA.
-- All 7 logos load (UChicago, Stanford, Georgia Tech, Amazon, J&J, Intel, DoD).
-- Mobile responsive: open DevTools (F12), toggle device toolbar (Ctrl+Shift+M), set width to 680px and 360px. Check the credentials grid wraps, the four pillars stack, and the CTAs go full-width.
+- All 7 logos load (UChicago, Stanford, Georgia Tech, Amazon, J&J, Intel, MITRE).
+- Mobile responsive: open DevTools (F12), toggle device toolbar (Ctrl+Shift+M), set width to 680px and 360px. Check the credentials grid wraps and the CTA buttons go full-width.
 
 ### 6. Iterate
 
@@ -87,9 +100,11 @@ git push origin main
 
 This makes the GitHub Pages site at `leanlog.ai` show the new content too. Some prefer to flip DNS first to avoid any inconsistency window — either order is fine since both will eventually serve the same content.
 
-### 2. Switch the Pages project's production branch
+### 2. (Skip if production is already `main`)
 
-In the Cloudflare dashboard for `leanlog-landing`:
+If the project was set up with production=`main` (current state — see top of doc), Cloudflare auto-rebuilds `main` the moment the merge lands. Nothing to do here.
+
+If production was set up as `refresh`, switch it now:
 - **Settings** → **Builds & deployments** → **Production branch** → change `refresh` to `main`.
 - Trigger a redeploy: **Deployments** tab → **Retry deployment** on the latest entry.
 
