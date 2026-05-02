@@ -100,11 +100,11 @@ main{position:relative;z-index:1}
   display:flex;align-items:center;flex-wrap:nowrap;
 }
 .org-logo{
-  padding:18px;
+  padding:14px 18px;
   display:flex;align-items:center;justify-content:center;
   flex:1;min-width:0;
 }
-.org-logo img{height:34px;width:auto;max-width:100%;object-fit:contain;display:block;opacity:.78;transition:opacity .2s}
+.org-logo img{height:32px;width:auto;max-width:100%;object-fit:contain;display:block;opacity:.78;transition:opacity .2s}
 .org-logo:hover img{opacity:1}
 /* GT mark stacks Georgia/Tech vertically; bump height for parity */
 .org-logo img[alt*="Georgia"]{height:60px}
@@ -144,9 +144,12 @@ footer{
   .org-logos{
     display:grid;grid-template-columns:repeat(4,1fr);
     flex-wrap:unset;
+    gap:8px 4px;
   }
   .org-logo{
+    flex:unset;
     padding:14px 8px;
+    background:transparent;
   }
   .org-logo img{height:24px;max-width:90%}
   .org-logo img[alt*="Georgia"]{height:42px}
@@ -158,8 +161,8 @@ footer{
 <nav class="nav">
   <a href="/" class="nav-logo"><img src="leanlog-final-light 2.png" alt="LeanLog"></a>
   <div class="nav-center">
+    <a href="/">Product</a>
     <a href="/#demo">Demo</a>
-    <a href="/#solution">Vision</a>
     <a href="/about.html">About</a>
   </div>
   <div class="nav-right">
