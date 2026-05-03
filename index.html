@@ -224,16 +224,27 @@ body::before{
 .demo-msg.system{
   display:flex;align-items:center;gap:10px;
   padding:10px 14px;background:rgba(0,0,0,.03);
-  border:1px solid var(--border);color:var(--text3);
-  font-family:var(--mono);font-size:11px;letter-spacing:.5px;
-  align-self:center;max-width:none;width:100%;
+  border-left:2px solid var(--border2);color:var(--text3);
+  font-size:12px;
+  align-self:stretch;max-width:none;width:100%;
 }
 .demo-msg.system.settled{
-  color:var(--text2);background:transparent;border-color:transparent;
+  color:var(--text2);background:rgba(15,157,88,.06);
+  border-left-color:rgba(15,157,88,.45);
 }
-.demo-msg.system.settled::before{
-  content:'✓';font-size:10px;margin-right:6px;opacity:.5;
+.demo-msg.system.settled .sys-check{
+  color:#188038;font-size:12px;line-height:1;flex-shrink:0;
 }
+/* Surface badge — matches the demo's SystemAction badge so the chat
+   row visually ties to the system the agent is touching. */
+.surface-badge{
+  font-family:var(--mono);font-size:9px;letter-spacing:.06em;
+  font-weight:600;padding:2px 6px;border-radius:2px;
+  flex-shrink:0;line-height:1.4;
+}
+.surface-badge.gmail  { background:#eaf2ff; color:#234478; text-transform:uppercase; }
+.surface-badge.sheets { background:#e6f4ea; color:#246a3c; }
+.surface-badge.ledger { background:#dfe4eb; color:#2b4a78; }
 .sys-pulse{
   display:flex;align-items:center;gap:3px;flex-shrink:0;
 }
@@ -685,64 +696,81 @@ const ro = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
 
-/* ── Demo cases ────────────────────────────────────────────────── */
+/* ── Demo cases ────────────────────────────────────────────────────
+   Pulled from the live demo at demo.leanlog.ai. Each case follows
+   the recommended path through the corresponding scenario's beat
+   script (see ../demos/public/app/src/runs/<scenario>.js). The
+   landing-page version drops the right-pane choreography and the
+   italic CoT lines — system rows + agent body + the auto-fired user
+   pill carry the flow.
+
+   When the demo's recommended path changes, mirror it here. */
 const cases = [
   {
     tab: "Customer order",
     msgs: [
-      { role: "human", text: "Rivera Restaurants just called. They want 200 cases of SKU #1142 by Wednesday — can we do it?" },
-      { role: "system", text: "Checking stock levels and outbound capacity…", done: "Checked stock — 340 units available", duration: 2000 },
-      { role: "agent", text: "You have 340 units of SKU #1142 on hand. Wednesday delivery is doable if we ship tomorrow. Want me to confirm with Rivera and generate the sales order?" },
-      { role: "human", text: "Yes, confirm it." },
-      { role: "system", text: "Calling Rivera Restaurants…", done: "Called Rivera Restaurants — confirmed", duration: 2400 },
-      { role: "agent", text: "Done. Rivera confirmed for Wednesday delivery. Sales order #4821 generated — $6,200. Outbound scheduled for tomorrow 8am. Your shipping team has been notified." }
+      { role: "agent", text: "Heads up — Carlos at Rivera just emailed. Off-cycle order: 200 cases of #1142 by Wednesday. He's a 3-year account; weekly standing order, just not on today's schedule. Let me check stock and capacity." },
+      { role: "system", surface: "ledger", text: "Pulling stock on #1142", done: "340 on hand · nothing reserved through Wed", duration: 1400 },
+      { role: "system", surface: "sheets", text: "Checking Wed outbound capacity", done: "Truck #4 has the Belmont route — Rivera is two blocks off it", duration: 1500 },
+      { role: "agent", text: "You've got it. 200 cases of #1142 on Wednesday, Truck #4. Standard Net 30, $6,200 total. Want me to draft the reply to Carlos and write the sales order?" },
+      { role: "human", text: "Confirm with Rivera" },
+      { role: "system", surface: "gmail",  text: "Sending confirmation to Carlos",  done: "Sent · 09:17",                                  duration: 1300 },
+      { role: "system", surface: "ledger", text: "Writing sales order SO-31294",    done: "200 cs #1142 · $6,200 · Wed dispatch",         duration: 1500 },
+      { role: "system", surface: "sheets", text: "Booking Wed dock slot",            done: "Truck #4 · Dock 1 · 8am stop",                 duration: 1300 },
+      { role: "agent", text: "All set. Carlos has the confirmation; SO-31294 is in the system; dock board reflects the Wednesday stop." }
     ]
   },
   {
     tab: "Invoice dispute",
     msgs: [
-      { role: "human", text: "I got 480 cases from Acme. Compare that to the invoice they sent." },
-      { role: "system", text: "Pulled invoice from email; cross-checked against ERP record…", done: "Found invoice #AC-8821; $248 discrepancy", duration: 1800 },
-      { role: "agent", text: "Invoice #AC-8821: 500 cases at $12.40 = $6,200. You received 480, so there's a $248 discrepancy. Want me to call Acme and request a corrected invoice?" },
-      { role: "human", text: "Yes, handle it." },
-      { role: "system", text: "Calling Acme Foods…", done: "Called Acme Foods. Credit memo issued", duration: 2800 },
-      { role: "agent", text: "Acme confirmed the short delivery. $248 credit memo issued. Records updated. Adjusted total is $5,952." }
+      { role: "agent", text: "Acme's invoice landed this morning — $6,200 for the diced tomato on PO-44190. AP auto-flagged it: yesterday's receipt was 480 cases, the invoice is for 500. Twenty cases short, $248 over. Walking the match." },
+      { role: "system", surface: "ledger", text: "Pulling PO + receipt + invoice for 3-way match", done: "PO-44190 · BOL-77881 · #AC-8821", duration: 1300 },
+      { role: "agent", text: "Variance: 20 cases short, $248 over-billed, 4.0%. Sits in your sign-off band. Quickest path is emailing Mike at Acme — he runs AR, we've worked through these clean before." },
+      { role: "human", text: "Email Acme" },
+      { role: "system", surface: "gmail",  text: "Sending credit-memo request to Mike", done: "Sent · 10:48",                              duration: 1300 },
+      { role: "system", surface: "gmail",  text: "Waiting on Mike",                     done: "Mike replied · credit memo confirmed",      duration: 4500 },
+      { role: "system", surface: "ledger", text: "Closing the match",                   done: "CM-AC-1124 · $248 · partial-matched",       duration: 1500 },
+      { role: "agent", text: "Mike confirmed: CM-AC-1124 for $248, posting today. Match closes at $5,952 net. Logged on Sarah's exception summary." }
     ]
   },
   {
     tab: "Carrier quotes",
     msgs: [
-      { role: "human", text: "I need to ship 12 pallets to Dallas by Friday. Get me some quotes." },
-      { role: "system", text: "Contacting FastFreight, LoneStar, and RoadRunner…", done: "Contacted 3 carriers; quotes received", duration: 2200 },
-      { role: "agent", text: "Three quotes back: FastFreight $1,840 (Thu), LoneStar $1,620 (Fri AM), RoadRunner $2,100 (Wed). Want me to negotiate?" },
-      { role: "human", text: "Yes, push them down." },
-      { role: "system", text: "Negotiating with FastFreight and LoneStar…", done: "Negotiated. FastFreight dropped to $1,680", duration: 2600 },
-      { role: "agent", text: "FastFreight dropped to $1,680. LoneStar held at $1,620, still cheapest, Friday morning. Book LoneStar?" },
-      { role: "human", text: "Book LoneStar." },
-      { role: "system", text: "Booking LoneStar Logistics…", done: "Booked LoneStar Logistics; confirmed", duration: 1400 },
-      { role: "agent", text: "Booked. Pickup tomorrow 3pm, Dock 1. Confirmation sent." }
+      { role: "agent", text: "Belmont needs 12 pallets to Dallas by Friday — Saturday event, on the dock Fri AM. Memphis → Dallas, off our routine lanes. Quote-shopping the usual three." },
+      { role: "system", surface: "gmail", text: "Sending quote requests to FastFreight, LoneStar, RoadRunner", done: "Sent · 3 carriers", duration: 1500 },
+      { role: "system", surface: "gmail", text: "Waiting on replies",                                          done: "RoadRunner $2,100 Wed · LoneStar $1,620 Fri AM · FastFreight $1,840 Thu", duration: 4000 },
+      { role: "agent", text: "LoneStar's already at 92% of the 90-day median. FastFreight's 4% over and they've moved on rate before. Want me to push FastFreight and see if LoneStar holds?" },
+      { role: "human", text: "Negotiate FastFreight + LoneStar" },
+      { role: "system", surface: "gmail",  text: "Sending counter-offers to both",                  done: "LoneStar held at $1,620 · FastFreight dropped to $1,680", duration: 4000 },
+      { role: "system", surface: "sheets", text: "Booking LoneStar · Thu pickup, Dock 1",            done: "Booked · LoneStar · $1,620",                              duration: 1400 },
+      { role: "agent", text: "Booked. LoneStar, $1,620, Thursday 3pm pickup at Dock 1, Friday morning delivery in Dallas. Casey at Belmont has the confirmation." }
     ]
   },
   {
     tab: "Delivery scheduling",
     msgs: [
-      { role: "system", text: "Incoming call — Acme Foods", done: "Call received — Acme Foods", duration: 1600 },
-      { role: "agent", text: "Acme wants to deliver 500 cases Thursday at 2pm. Dock 3 is open. Confirm?" },
-      { role: "human", text: "Yes, lock it in." },
-      { role: "system", text: "Calling Acme Foods to confirm…", done: "Called Acme Foods — confirmed", duration: 2600 },
-      { role: "agent", text: "Confirmed with Acme — Thursday 2pm, Dock 3. Receiving schedule updated. Floor team notified." }
+      { role: "agent", text: "Mike at Acme just emailed about Thursday's inbound — PO-44217, 500 cases of #3318. Wants a 2pm dock window. Checking the board." },
+      { role: "system", surface: "sheets", text: "Pulling Thursday dock board", done: "Cardinal 9am Dock 1 · Heartland 11am Dock 2 · Dock 3 open 1pm-4pm", duration: 1500 },
+      { role: "agent", text: "Thursday 2pm Dock 3 works. Outbound Thu PM is Truck #2 from Dock 1 — no collision. Confirm with Mike?" },
+      { role: "human", text: "Confirm Thu 2pm Dock 3" },
+      { role: "system", surface: "gmail",  text: "Sending confirmation to Mike",        done: "Sent · 14:57",                                duration: 1200 },
+      { role: "system", surface: "sheets", text: "Booking Thu 2pm Dock 3",               done: "500 cs · #3318 · PO-44217",                    duration: 1300 },
+      { role: "system", surface: "gmail",  text: "Pinging Lonnie on receiving",         done: "Sent · 14:58",                                duration: 1100 },
+      { role: "agent", text: "Mike's confirmed for Thursday 2pm Dock 3. Posted to the dock board; Lonnie has the receiving heads-up." }
     ]
   },
   {
     tab: "Low stock reorder",
     msgs: [
-      { role: "agent", text: "SKU #4412 (kraft mailer boxes) is down to 120 units, below your 200-unit threshold. Reorder?" },
-      { role: "human", text: "Yeah, what are the options? Check if there's something cheaper than Pacific." },
-      { role: "system", text: "Comparing suppliers and live pricing…", done: "Searched market; 3 suppliers found", duration: 2400 },
-      { role: "agent", text: "Three suppliers: Pacific Supply $0.82/unit (your usual), BoxCo $0.74/unit (new), WebPack $0.79/unit. BoxCo saves $40 on a 500-unit order, same 3-day lead time." },
-      { role: "human", text: "Go with BoxCo." },
-      { role: "system", text: "Placing PO with BoxCo…", done: "Placed PO with BoxCo. $370 total", duration: 1600 },
-      { role: "agent", text: "PO sent to BoxCo: 500 units at $0.74, total $370. Saves $40 vs. Pacific. Expected delivery Monday. Tracking it." }
+      { role: "agent", text: "Reorder alert just fired on kraft mailers — SKU 4412. Down to 120 against your 200 threshold; burn rate ~30/wk, so four weeks before you're out. Shopping the three suppliers." },
+      { role: "system", surface: "gmail",  text: "Sending quote requests to Pacific, BoxCo, WebPack", done: "Sent · 3 suppliers",                                duration: 1500 },
+      { role: "system", surface: "gmail",  text: "Waiting on quotes",                                  done: "Pacific $0.82/u · BoxCo $0.74/u (new) · WebPack $0.79/u", duration: 3700 },
+      { role: "system", surface: "ledger", text: "Pulling PO history on #4412",                        done: "Last 6 POs all Pacific at $0.80-$0.82",              duration: 1300 },
+      { role: "agent", text: "BoxCo at $370 saves $40 vs Pacific. Same lead time, no downside I can see — though it's a first run with them. Place the PO and send Janelle a courtesy note?" },
+      { role: "human", text: "Order from BoxCo, save $40" },
+      { role: "system", surface: "ledger", text: "Writing PO to BoxCo",                                done: "PO-44226 · 500 u · $370 · Net 30",                  duration: 1500 },
+      { role: "system", surface: "gmail",  text: "Sending courtesy note to Janelle",                   done: "Sent · 16:25",                                       duration: 1500 },
+      { role: "agent", text: "PO-44226 is live with BoxCo. Janelle has the courtesy note. Reorder sheet shows #4412 back over threshold. $40 saved today." }
     ]
   }
 ];
@@ -780,13 +808,28 @@ function animateMessages(msgs, idx) {
   if (m.role === 'system') {
     const div = document.createElement('div');
     div.className = 'demo-msg system';
-    div.innerHTML = `<div class="sys-pulse"><span></span><span></span><span></span></div><span class="sys-text">${m.text}</span>`;
+    const badgeHtml = m.surface
+      ? `<span class="surface-badge ${m.surface}">${
+          m.surface === 'gmail' ? 'GMAIL' :
+          m.surface === 'sheets' ? 'Google Sheets' :
+          m.surface === 'ledger' ? 'ledger' : m.surface
+        }</span>`
+      : '';
+    div.innerHTML = `${badgeHtml}<div class="sys-pulse"><span></span><span></span><span></span></div><span class="sys-text">${m.text}</span>`;
     bodyEl.appendChild(div);
     requestAnimationFrame(() => div.classList.add('visible'));
     bodyEl.scrollTop = bodyEl.scrollHeight;
     animTimeout = setTimeout(() => {
       if (m.done) {
-        div.querySelector('.sys-pulse').remove();
+        // Replace pulse with the green ✓ check used by the live demo's
+        // SystemAction component; keep the badge in place.
+        const pulse = div.querySelector('.sys-pulse');
+        if (pulse) {
+          const check = document.createElement('span');
+          check.className = 'sys-check';
+          check.textContent = '✓';
+          pulse.replaceWith(check);
+        }
         div.querySelector('.sys-text').innerHTML = m.done;
         div.classList.add('settled');
       }
@@ -807,7 +850,8 @@ function animateMessages(msgs, idx) {
   const cursor = document.createElement('span'); cursor.className = 'typing-cursor';
   txt.appendChild(cursor);
   let ci = 0;
-  const speed = m.role === 'agent' ? 14 : 10;
+  // Match the live demo's typewriter pacing: 10ms/char body + jitter.
+  const speed = m.role === 'agent' ? 10 : 8;
   const node = document.createTextNode('');
   txt.insertBefore(node, cursor);
 
